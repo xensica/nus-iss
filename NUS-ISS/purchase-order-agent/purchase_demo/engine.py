@@ -16,14 +16,24 @@ def history(as_of):
     return [dict(date=(as_of-timedelta(days=84-i)).isoformat(), units=max(1, round((38 if (as_of-timedelta(days=84-i)).weekday()<5 else 50)*(0.9+i/840)+rng.uniform(-7,7)))) for i in range(84)]
 
 
-def forecast(config):
+def forecast(config, records=None):
     from datetime import date
     as_of = date.fromisoformat(config['date'])
-    records = history(as_of)
+    records = history(as_of) if records is None else records
+    records = sorted([r for r in records if r['date'] <= as_of.isoformat()], key=lambda r:r['date'])
+    if not records:
+        raise ValueError('No sales history exists on or before the analysis date.')
+    recent = [r for r in records if r['date'] > (as_of-timedelta(days=28)).isoformat()]
+    if not recent:
+        raise ValueError('Sales history is stale: no observations in the last 28 days.')
+    fallback = False
     daily = []
     for day in range(1,15):
         target = as_of + timedelta(days=day)
-        matches = [r['units'] for r in records[-28:] if date.fromisoformat(r['date']).weekday()==target.weekday()]
+        matches = [r['units'] for r in recent if date.fromisoformat(r['date']).weekday()==target.weekday()]
+        if len(matches) < 2:
+            matches = [r['units'] for r in recent]
+            fallback = True
         baseline = math.ceil(sum(matches)/len(matches))
         uplift = config['uplift']/100 if config['event_start'] <= day < config['event_start']+config['event_duration'] and config['scenario'] != 'Normal trading' else 0
         units = math.ceil(baseline*(1+config['owner_adjustment']/100)*(1+uplift))
@@ -40,14 +50,17 @@ def forecast(config):
         if balance < 0 and shortage is None:
             shortage = r['day']
     return dict(daily=daily, safety=safety, quantity=need, shortage_day=shortage,
-                reorder_point=sum(r['demand'] for r in daily[:7])+safety)
+                reorder_point=sum(r['demand'] for r in daily[:7])+safety,
+                method='Recent-mean fallback' if fallback else 'Recent weekday average',
+                observations=len(recent), needs_review=fallback or len(recent)<28)
 
 
-def plan(config, prediction):
+def plan(config, prediction, suppliers=None, urgent_quantity=0, urgent_days=None):
+    suppliers = SUPPLIERS if suppliers is None else suppliers
     quantity = prediction['quantity']
     if quantity > 2000:
         return dict(status='blocked', reason='This demo supports at most 2,000 units per plan. Reduce the scenario or increase existing stock.')
-    eligible = [s for s in SUPPLIERS if s['quality'] >= config['quality'] and s['reliability'] >= config['reliability']]
+    eligible = [s for s in suppliers if s['quality'] >= config['quality'] and s['reliability'] >= config['reliability'] and s.get('approved', True)]
     demands = [r['demand'] for r in prediction['daily']]
     cumulative = list(itertools.accumulate(demands))
     def assess(orders):
@@ -55,6 +68,8 @@ def plan(config, prediction):
         for s,q in orders:
             if not s['minimum'] <= q <= s['capacity']:
                 return None
+        if urgent_quantity and (urgent_days is None or sum(q for s,q in orders if s['days']<=urgent_days)<urgent_quantity):
+            return None
         balances = [config['stock'] + (config['incoming'] if d>=config['incoming_day'] else 0)
                     +sum(q for s,q in orders if s['days']<=d)-used for d,used in enumerate(cumulative,1)]
         if min(balances) < 0 or balances[-1] < prediction['safety']:
@@ -76,11 +91,12 @@ def plan(config, prediction):
                 c=assess([(a,qa),(b,qb)])
                 if c: candidates.append(c)
     if not candidates:
-        return dict(status='blocked',reason='No plan meets daily demand and final safety stock with these suppliers. A shortage may occur before the earliest delivery, or stock/MOQ/quality limits may prevent a plan. Ask the owner to adjust inputs; do not place an order.')
+        reason = ('Incoming stock covers the total quantity but arrives too late. Expedite that delivery or arrange an emergency transfer.' if quantity == 0 else 'No feasible allocation in the one-or-two-supplier, exact-quantity search. Check early shortages, MOQ, capacity, urgent deadlines and supplier thresholds. Consider expediting stock or changing the inputs.')
+        return dict(status='blocked',reason=reason)
     best=min(candidates,key=lambda c:(c['cost_cents'],len(c['orders'])))
     singles=[c['cost_cents'] for c in candidates if len(c['orders'])==1]
     best['saving_cents']=min(singles)-best['cost_cents'] if singles else None
-    best['status']='ready' if best['cost_cents']<=round(config['budget']*100) else 'over_budget'
+    best['status']=('no_purchase_needed' if quantity==0 else 'ready') if best['cost_cents']<=round(config['budget']*100) else 'over_budget'
     best['reason']='Cheapest feasible plan within this demo’s one-or-two-supplier, exact-quantity search. Delivery dates are estimates; not risk guarantees.'
     return best
 

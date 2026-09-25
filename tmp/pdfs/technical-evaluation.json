@@ -1,0 +1,608 @@
+{
+  "dataset": "389855f934b519cc",
+  "source": "Simulated sample \u2022 12 products",
+  "run_date": "2026-09-25",
+  "horizon": 14,
+  "summary": [
+    {
+      "method": "Weekday average",
+      "MAE": 1.6845238095238095,
+      "MAPE": 6.639658069071275,
+      "WAPE": 6.691889335540317
+    },
+    {
+      "method": "Last week",
+      "MAE": 2.113095238095238,
+      "MAPE": 8.492290434007183,
+      "WAPE": 8.394419484511705
+    },
+    {
+      "method": "Moving average",
+      "MAE": 2.6964285714285716,
+      "MAPE": 10.869009129904668,
+      "WAPE": 10.711752187278316
+    }
+  ],
+  "forecasts": [
+    {
+      "product_id": "COF",
+      "method": "Weekday average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 2.9285714285714284,
+      "MAPE": 7.907858032464133,
+      "WAPE": 7.961165048543689
+    },
+    {
+      "product_id": "COF",
+      "method": "Last week",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 3.5,
+      "MAPE": 9.82719289381816,
+      "WAPE": 9.514563106796116
+    },
+    {
+      "product_id": "COF",
+      "method": "Moving average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 3.2142857142857144,
+      "MAPE": 8.91338997091561,
+      "WAPE": 8.737864077669903
+    },
+    {
+      "product_id": "TEA",
+      "method": "Weekday average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 2.357142857142857,
+      "MAPE": 7.5183400382828625,
+      "WAPE": 7.65661252900232
+    },
+    {
+      "product_id": "TEA",
+      "method": "Last week",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 3.2142857142857144,
+      "MAPE": 10.169018238633035,
+      "WAPE": 10.440835266821345
+    },
+    {
+      "product_id": "TEA",
+      "method": "Moving average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 2.7857142857142856,
+      "MAPE": 9.12034863491535,
+      "WAPE": 9.048723897911833
+    },
+    {
+      "product_id": "WAT",
+      "method": "Weekday average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 3.2142857142857144,
+      "MAPE": 6.558582314769132,
+      "WAPE": 6.437768240343348
+    },
+    {
+      "product_id": "WAT",
+      "method": "Last week",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 4.071428571428571,
+      "MAPE": 8.51619661579812,
+      "WAPE": 8.15450643776824
+    },
+    {
+      "product_id": "WAT",
+      "method": "Moving average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 5.785714285714286,
+      "MAPE": 11.654759461499415,
+      "WAPE": 11.587982832618026
+    },
+    {
+      "product_id": "OAT",
+      "method": "Weekday average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 1.5,
+      "MAPE": 7.266462725441054,
+      "WAPE": 7.581227436823105
+    },
+    {
+      "product_id": "OAT",
+      "method": "Last week",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 1.7857142857142858,
+      "MAPE": 8.948535554572707,
+      "WAPE": 9.025270758122744
+    },
+    {
+      "product_id": "OAT",
+      "method": "Moving average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 2.2142857142857144,
+      "MAPE": 10.912821268858421,
+      "WAPE": 11.191335740072201
+    },
+    {
+      "product_id": "JUI",
+      "method": "Weekday average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 1.5,
+      "MAPE": 6.6434285176521195,
+      "WAPE": 6.158357771260997
+    },
+    {
+      "product_id": "JUI",
+      "method": "Last week",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 2.0714285714285716,
+      "MAPE": 8.69474307373215,
+      "WAPE": 8.504398826979472
+    },
+    {
+      "product_id": "JUI",
+      "method": "Moving average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 3.2142857142857144,
+      "MAPE": 13.843148462874314,
+      "WAPE": 13.196480938416423
+    },
+    {
+      "product_id": "BAR",
+      "method": "Weekday average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 1.7857142857142858,
+      "MAPE": 5.7871244756453475,
+      "WAPE": 5.966587112171838
+    },
+    {
+      "product_id": "BAR",
+      "method": "Last week",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 2.0714285714285716,
+      "MAPE": 6.910431861251799,
+      "WAPE": 6.921241050119332
+    },
+    {
+      "product_id": "BAR",
+      "method": "Moving average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 2.642857142857143,
+      "MAPE": 8.23619048384086,
+      "WAPE": 8.83054892601432
+    },
+    {
+      "product_id": "NUT",
+      "method": "Weekday average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 1.0714285714285714,
+      "MAPE": 6.689010532442642,
+      "WAPE": 6.437768240343348
+    },
+    {
+      "product_id": "NUT",
+      "method": "Last week",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 1.2142857142857142,
+      "MAPE": 7.113559139764358,
+      "WAPE": 7.296137339055794
+    },
+    {
+      "product_id": "NUT",
+      "method": "Moving average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 1.9285714285714286,
+      "MAPE": 11.738918454144017,
+      "WAPE": 11.587982832618026
+    },
+    {
+      "product_id": "CRK",
+      "method": "Weekday average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 1.2142857142857142,
+      "MAPE": 5.772089578480555,
+      "WAPE": 5.6105610561056105
+    },
+    {
+      "product_id": "CRK",
+      "method": "Last week",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 1.5,
+      "MAPE": 7.403142318555852,
+      "WAPE": 6.930693069306931
+    },
+    {
+      "product_id": "CRK",
+      "method": "Moving average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 2.5,
+      "MAPE": 11.608929221711175,
+      "WAPE": 11.551155115511552
+    },
+    {
+      "product_id": "CHO",
+      "method": "Weekday average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 1.0714285714285714,
+      "MAPE": 7.553867700926524,
+      "WAPE": 7.109004739336493
+    },
+    {
+      "product_id": "CHO",
+      "method": "Last week",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 1.2142857142857142,
+      "MAPE": 8.306623931623932,
+      "WAPE": 8.056872037914692
+    },
+    {
+      "product_id": "CHO",
+      "method": "Moving average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 1.6428571428571428,
+      "MAPE": 11.526046315962281,
+      "WAPE": 10.90047393364929
+    },
+    {
+      "product_id": "NOO",
+      "method": "Weekday average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 2.0,
+      "MAPE": 7.598601177405525,
+      "WAPE": 7.608695652173913
+    },
+    {
+      "product_id": "NOO",
+      "method": "Last week",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 1.4285714285714286,
+      "MAPE": 5.462134282786456,
+      "WAPE": 5.434782608695652
+    },
+    {
+      "product_id": "NOO",
+      "method": "Moving average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 3.2857142857142856,
+      "MAPE": 12.207389631302675,
+      "WAPE": 12.5
+    },
+    {
+      "product_id": "BIS",
+      "method": "Weekday average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 0.9285714285714286,
+      "MAPE": 5.217391304347826,
+      "WAPE": 5.138339920948616
+    },
+    {
+      "product_id": "BIS",
+      "method": "Last week",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 2.0714285714285716,
+      "MAPE": 11.546107573464168,
+      "WAPE": 11.462450592885375
+    },
+    {
+      "product_id": "BIS",
+      "method": "Moving average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 1.6428571428571428,
+      "MAPE": 8.949253614489274,
+      "WAPE": 9.090909090909092
+    },
+    {
+      "product_id": "HON",
+      "method": "Weekday average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 0.6428571428571429,
+      "MAPE": 5.163140430997573,
+      "WAPE": 5.027932960893855
+    },
+    {
+      "product_id": "HON",
+      "method": "Last week",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 1.2142857142857142,
+      "MAPE": 9.009799724085438,
+      "WAPE": 9.497206703910615
+    },
+    {
+      "product_id": "HON",
+      "method": "Moving average",
+      "train_end": "2026-09-09",
+      "test_start": "2026-09-10",
+      "test_end": "2026-09-23",
+      "MAE": 1.5,
+      "MAPE": 11.71691403834261,
+      "WAPE": 11.731843575418994
+    }
+  ],
+  "decisions": [
+    {
+      "product_id": "COF",
+      "policy": "Agent",
+      "feasible": true,
+      "cost_SGD": 640.0,
+      "stockout_days": 0,
+      "lost_units": 0,
+      "ending_stock": 51
+    },
+    {
+      "product_id": "COF",
+      "policy": "Reorder-point baseline",
+      "feasible": true,
+      "cost_SGD": 605.2,
+      "stockout_days": 1,
+      "lost_units": 31,
+      "ending_stock": 74
+    },
+    {
+      "product_id": "TEA",
+      "policy": "Agent",
+      "feasible": true,
+      "cost_SGD": 379.56,
+      "stockout_days": 0,
+      "lost_units": 0,
+      "ending_stock": 37
+    },
+    {
+      "product_id": "TEA",
+      "policy": "Reorder-point baseline",
+      "feasible": true,
+      "cost_SGD": 356.08,
+      "stockout_days": 1,
+      "lost_units": 26,
+      "ending_stock": 59
+    },
+    {
+      "product_id": "WAT",
+      "policy": "Agent",
+      "feasible": true,
+      "cost_SGD": 350.8,
+      "stockout_days": 0,
+      "lost_units": 0,
+      "ending_stock": 60
+    },
+    {
+      "product_id": "WAT",
+      "policy": "Reorder-point baseline",
+      "feasible": true,
+      "cost_SGD": 332.56,
+      "stockout_days": 1,
+      "lost_units": 44,
+      "ending_stock": 101
+    },
+    {
+      "product_id": "OAT",
+      "policy": "Agent",
+      "feasible": true,
+      "cost_SGD": 493.54,
+      "stockout_days": 0,
+      "lost_units": 0,
+      "ending_stock": 17
+    },
+    {
+      "product_id": "OAT",
+      "policy": "Reorder-point baseline",
+      "feasible": true,
+      "cost_SGD": 457.76,
+      "stockout_days": 2,
+      "lost_units": 23,
+      "ending_stock": 36
+    },
+    {
+      "product_id": "JUI",
+      "policy": "Agent",
+      "feasible": true,
+      "cost_SGD": 504.54,
+      "stockout_days": 0,
+      "lost_units": 0,
+      "ending_stock": 41
+    },
+    {
+      "product_id": "JUI",
+      "policy": "Reorder-point baseline",
+      "feasible": true,
+      "cost_SGD": 470.0,
+      "stockout_days": 2,
+      "lost_units": 23,
+      "ending_stock": 58
+    },
+    {
+      "product_id": "BAR",
+      "policy": "Agent",
+      "feasible": true,
+      "cost_SGD": 308.32,
+      "stockout_days": 0,
+      "lost_units": 0,
+      "ending_stock": 16
+    },
+    {
+      "product_id": "BAR",
+      "policy": "Reorder-point baseline",
+      "feasible": true,
+      "cost_SGD": 284.56,
+      "stockout_days": 2,
+      "lost_units": 38,
+      "ending_stock": 48
+    },
+    {
+      "product_id": "NUT",
+      "policy": "Agent",
+      "feasible": true,
+      "cost_SGD": 380.5,
+      "stockout_days": 0,
+      "lost_units": 0,
+      "ending_stock": 25
+    },
+    {
+      "product_id": "NUT",
+      "policy": "Reorder-point baseline",
+      "feasible": true,
+      "cost_SGD": 350.0,
+      "stockout_days": 2,
+      "lost_units": 17,
+      "ending_stock": 39
+    },
+    {
+      "product_id": "CRK",
+      "policy": "Agent",
+      "feasible": true,
+      "cost_SGD": 293.5,
+      "stockout_days": 0,
+      "lost_units": 0,
+      "ending_stock": 25
+    },
+    {
+      "product_id": "CRK",
+      "policy": "Reorder-point baseline",
+      "feasible": true,
+      "cost_SGD": 268.0,
+      "stockout_days": 2,
+      "lost_units": 27,
+      "ending_stock": 47
+    },
+    {
+      "product_id": "CHO",
+      "policy": "Agent",
+      "feasible": true,
+      "cost_SGD": 389.92,
+      "stockout_days": 0,
+      "lost_units": 0,
+      "ending_stock": 23
+    },
+    {
+      "product_id": "CHO",
+      "policy": "Reorder-point baseline",
+      "feasible": true,
+      "cost_SGD": 346.0,
+      "stockout_days": 1,
+      "lost_units": 14,
+      "ending_stock": 29
+    },
+    {
+      "product_id": "NOO",
+      "policy": "Agent",
+      "feasible": true,
+      "cost_SGD": 298.9,
+      "stockout_days": 0,
+      "lost_units": 0,
+      "ending_stock": 20
+    },
+    {
+      "product_id": "NOO",
+      "policy": "Reorder-point baseline",
+      "feasible": true,
+      "cost_SGD": 276.24,
+      "stockout_days": 2,
+      "lost_units": 30,
+      "ending_stock": 46
+    },
+    {
+      "product_id": "BIS",
+      "policy": "Agent",
+      "feasible": true,
+      "cost_SGD": 309.66,
+      "stockout_days": 0,
+      "lost_units": 0,
+      "ending_stock": 20
+    },
+    {
+      "product_id": "BIS",
+      "policy": "Reorder-point baseline",
+      "feasible": true,
+      "cost_SGD": 280.56,
+      "stockout_days": 2,
+      "lost_units": 19,
+      "ending_stock": 34
+    },
+    {
+      "product_id": "HON",
+      "policy": "Agent",
+      "feasible": true,
+      "cost_SGD": 118.11,
+      "stockout_days": 0,
+      "lost_units": 0,
+      "ending_stock": 16
+    },
+    {
+      "product_id": "HON",
+      "policy": "Reorder-point baseline",
+      "feasible": true,
+      "cost_SGD": 100.72,
+      "stockout_days": 2,
+      "lost_units": 14,
+      "ending_stock": 25
+    }
+  ],
+  "skipped": [],
+  "notes": "Fixed-origin last-14-day holdout; at least 42 consecutive daily observations required. Missing days are not treated as zero. MAPE excludes zero actuals; WAPE undefined for all-zero actuals. Purchasing replay is simulated, with identical starting stock (5 days of training mean), no incoming stock, one decision, lost sales and unchanged supplier constraints. Baseline buys on a 7-day reorder point from cheapest eligible supplier; unlike the agent it does not check daily coverage. Costs and service must be read together, not as like-for-like savings. No accuracy or savings target is asserted as achieved."
+}

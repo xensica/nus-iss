@@ -1,1 +1,0 @@
-"""StockPilot purchasing prototype."""

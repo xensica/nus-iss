@@ -8,16 +8,16 @@ import pandas as pd
 import streamlit as st
 
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent))
-from purchase_demo.catalogue import DEFAULTS, analyse
-from purchase_demo.data_io import load_dataset, csv_text
+from purchase_demo.data_io import csv_text
 from purchase_demo.evaluation import evaluate
 from purchase_demo.gateway import brief
 from purchase_demo.storage import draft_payload, save_draft, list_batches, review
-from purchase_demo.uci_import import prepare_uci
 from purchase_demo.visuals import CSS, risk_map, order_document
-from purchase_demo.local_context import search_places, discover_events
+from purchase_demo.local_context import discover_events
 from purchase_demo.workspace import tea_demo, clear_event_overrides, event_summary, today_sg
 from purchase_demo.ui_details import product_detail, event_detail
+from purchase_demo.ui_state import load_data, recalculate, reset_selection
+from purchase_demo.ui_store import render_store
 
 st.set_page_config(page_title='StockPilot · Your next restock',page_icon='🌱',layout='wide',initial_sidebar_state='expanded')
 st.markdown(CSS,unsafe_allow_html=True)
@@ -30,50 +30,10 @@ def heading(kicker,title,body=''):
     st.markdown(f'<div class="eyebrow">{escape(kicker)}</div>',unsafe_allow_html=True)
     st.title(title)
     if body:st.caption(body)
-def recalculate():
-    S.analysis=analyse(S.dataset,S.settings,S.overrides);S.pop('briefing',None)
-def reset_selection():
-    S.selection_version=S.get('selection_version',0)+1
-    S.selected=[pid for pid,r in S.analysis['results'].items() if r['plan']['status']=='ready']
-def load_data(data,as_of):
-    S.dataset=data;S.settings=dict(DEFAULTS,date=as_of);S.overrides={}
-    S.pop('event_report',None);S.pop('evaluation',None);recalculate();reset_selection()
-
-def change_location(location):
-    S.location=dict(location);S.pop('event_report',None)
-    S.overrides=clear_event_overrides(S.overrides);recalculate();reset_selection()
-
 if 'route' not in S:
     S.route='Today';S.onboarded=False;S.store_name='Marina Bay Tea';S.store_type='Tea & drinks';S.location=None
     S.radius=2.0;S.selection_version=0
     load_data(tea_demo(),today_sg().isoformat())
-
-
-def location_setup():
-    st.caption('Find your public store location. Search shares this text with Photon / OpenStreetMap.')
-    with st.form('location_search'):
-        query=st.text_input('Mall, street or postal code',value='Marina Bay Sands' if S.location is None else S.location['label'],max_chars=180)
-        find=st.form_submit_button('Find store location')
-    if find:
-        try:
-            with st.spinner('Finding matching places…'):S.place_matches=search_places(query)
-            if not S.place_matches:st.info('No match found. Try a landmark or enter coordinates below.')
-        except ValueError as e:st.warning(str(e))
-    if S.get('place_matches'):
-        index=st.selectbox('Confirm the matching place',range(len(S.place_matches)),format_func=lambda i:S.place_matches[i]['label'])
-        candidate=S.place_matches[index]
-        st.caption(f"Map point: {candidate['lat']:.5f}, {candidate['lon']:.5f}. Confirm this is near your storefront.")
-        if st.button('Use this location',type='primary'):
-            change_location(candidate);S.pop('place_matches',None);st.rerun()
-    with st.expander('Enter map coordinates instead'):
-        with st.form('coordinates'):
-            label=st.text_input('Location label','Near Marina Bay Sands')
-            a,b=st.columns(2)
-            lat=a.number_input('Latitude',1.1,1.5,float((S.location or {}).get('lat',1.2834)),format='%.6f')
-            lon=b.number_input('Longitude',103.5,104.2,float((S.location or {}).get('lon',103.8607)),format='%.6f')
-            if st.form_submit_button('Save map point'):
-                change_location(dict(label=label,lat=lat,lon=lon,source='User-entered approximate map point'));st.rerun()
-    st.caption('Location data © OpenStreetMap contributors · ODbL. Radius uses approximate straight-line distance.')
 
 
 with st.sidebar:
@@ -114,6 +74,12 @@ if S.route=='Today':
     if not S.dataset['source'].startswith('Uploaded'):st.caption('SAMPLE DATA · synthetic sales & inventory · simulated supplier terms')
     a,b,c=st.columns(3)
     a.metric('Ready to restock',str(len(ready)));b.metric('Need a closer look',str(len(blocked)));c.metric('Available budget',money(analysis['budget_cents']))
+    with st.expander('What is this plan based on?'):
+        snapshot=date.fromisoformat(S.settings['date'])
+        st.write(f"Planning window: **{snapshot+timedelta(days=1):%d %b}?{snapshot+timedelta(days=14):%d %b %Y}**. Stock snapshot: **{snapshot:%d %b %Y}**.")
+        st.write('We estimate demand from recent sales, add your safety buffer, then subtract stock on hand and incoming deliveries. Supplier choices must cover daily demand and meet your quality and delivery requirements.')
+        st.caption(f"{len(results)} products ? {S.settings['buffer_days']} buffer days ? {S.settings['owner_adjustment']:+}% overall demand adjustment. Open Details for stock levels, delivery dates and individual assumptions.")
+        st.caption('Ready means a feasible recommendation. Your selected products must also fit the shared budget before you can save a draft.')
     left,right=st.columns([1.6,1],gap='large')
     with left,st.container(border=True):
         st.markdown('**YOUR NEXT MOVE**')
@@ -172,6 +138,7 @@ if S.route=='Today':
             if checked and pid not in S.selected:S.selected=S.selected+[pid]
             elif not checked and pid in S.selected:S.selected=[p for p in S.selected if p!=pid]
             b.markdown('**'+escape(r['product']['name'])+'**');b.caption('Needs your attention' if plan['status']=='blocked' else (f"Stock gap in {f['shortage_day']} days" if f and f['shortage_day'] else 'Stock is covered'))
+            b.caption(f"{r['config']['stock']} on hand ? {r['config']['incoming']} incoming")
             c.markdown(f"**{f['quantity'] if f else '—'}** units");d.markdown('**'+(money(plan['cost_cents']) if 'cost_cents' in plan else 'Review needed')+'**')
             if e.button('Details',key='detail_'+pid,width='stretch'):product_detail(pid)
     if not shown:st.info('No products match this view.')
@@ -216,51 +183,7 @@ elif S.route=='Orders':
 
 elif S.route=='Store':
     heading('STORE','Make it your store.','Set up this session. Adjust when your stock or trading conditions change.')
-    a,b=st.columns([1,1],gap='large')
-    with a,st.container(border=True):
-        st.subheader('Store profile')
-        with st.form('profile'):
-            name=st.text_input('Store name',S.store_name,max_chars=80)
-            kinds=['Tea & drinks','Convenience retail','Snacks & gifts','Other'];kind=st.selectbox('Store type',kinds,index=kinds.index(S.store_type))
-            radius=st.slider('Nearby-event radius (km)',.5,5.0,float(S.radius),.5)
-            if st.form_submit_button('Save store'):
-                S.store_name=name.strip() or 'My store';S.store_type=kind
-                if S.radius!=radius:
-                    S.overrides=clear_event_overrides(S.overrides);recalculate();reset_selection()
-                S.radius=radius;S.pop('event_report',None);st.rerun()
-        location_setup()
-    with b,st.container(border=True):
-        st.subheader('Sales & current stock');st.caption(S.dataset['source'])
-        sales=st.file_uploader('Daily sales CSV',type=['csv']);stock=st.file_uploader('Inventory CSV',type=['csv'])
-        snapshot=st.date_input('Inventory snapshot date',date.fromisoformat(S.settings['date']))
-        if st.button('Load files & build my plan',type='primary',disabled=sales is None or stock is None,width='stretch'):
-            try:load_data(load_dataset(sales.getvalue(),stock.getvalue()),snapshot.isoformat());S.onboarded=True;S.route='Today';st.rerun()
-            except ValueError as e:st.error(str(e))
-        sample=tea_demo();a1,b1=st.columns(2);a1.download_button('Sales template',csv_text(sample['sales']),file_name='sales.csv',mime='text/csv');b1.download_button('Stock template',csv_text(sample['inventory']),file_name='inventory.csv',mime='text/csv')
-        with st.expander('File format & data rules'):
-            st.code('sales: date,product_id,units\ninventory: product_id,current_stock\noptional: incoming_units,incoming_day,name,category,unit_price_cents')
-            st.write('Use UTF-8 CSV, ISO dates and nonnegative whole units. One row per product/day. Include explicit zeros. Product IDs must match. Maximum 15 products, 100,000 rows and 10 MB per daily file. Stock must match the snapshot date. Supplier terms remain simulated.')
-        if st.button('Use the tea-shop sample instead'):
-            load_data(tea_demo(),today_sg().isoformat());S.onboarded=True;S.route='Today';st.rerun()
-    with st.expander('Budget & planning assumptions',expanded=True):
-        with st.form('settings'):
-            a,b,c=st.columns(3);budget=a.number_input('Purchasing budget (SGD)',0,1000000,int(S.settings['budget']));buffer=b.slider('Safety buffer (days)',0,5,int(S.settings['buffer_days']));asof=c.date_input('Analysis / stock snapshot',date.fromisoformat(S.settings['date']))
-            a,b,c=st.columns(3);adjust=a.slider('Overall demand adjustment (%)',-50,100,int(S.settings['owner_adjustment']));quality=b.slider('Supplier quality minimum',0,100,int(S.settings['quality']));reliability=c.slider('Supplier on-time score minimum',0,100,int(S.settings['reliability']))
-            a,b,c=st.columns(3);manual=a.checkbox('Model a known promotion',value=S.settings['scenario']!='Normal trading');start=b.number_input('Starts on forecast day',1,14,int(S.settings['event_start']));duration=c.number_input('Duration (days)',1,14,int(S.settings['event_duration']));uplift=a.slider('Assumed promotion uplift (%)',0,100,int(S.settings['uplift']))
-            st.caption('Promotion effects are your assumptions. Product and nearby-event overrides take priority.')
-            if st.form_submit_button('Save & see my plan →',type='primary'):
-                if asof.isoformat()!=S.settings['date']:
-                    S.overrides=clear_event_overrides(S.overrides);S.pop('event_report',None)
-                S.settings=dict(DEFAULTS,date=asof.isoformat(),budget=budget,buffer_days=buffer,owner_adjustment=adjust,quality=quality,reliability=reliability,scenario='Promotion / event' if manual else 'Normal trading',event_start=start,event_duration=duration,uplift=uplift)
-                recalculate();reset_selection();S.onboarded=True;S.route='Today';st.rerun()
-    with st.expander('Import a UCI-format transaction ledger'):
-        raw=st.file_uploader('Transaction CSV',type=['csv'],key='uci_file');fmt=st.text_input('Timestamp format','%m/%d/%Y %H:%M');cap=st.number_input('Maximum units per transaction',1,1000000,1000)
-        complete=st.checkbox('The ledger is complete; missing product/day transactions may be treated as zero.')
-        if st.button('Prepare transaction data',disabled=raw is None or not complete):
-            try:
-                data=prepare_uci(raw.getvalue(),fmt,max_transaction_units=cap);load_data(data,data['cleaning']['analysis_date']);S.onboarded=True;S.route='Today';st.rerun()
-            except ValueError as e:st.error(str(e))
-        st.caption('Customer identifiers are not retained. Stock, supplier terms and SGD purchase prices remain simulated. Returns are excluded, not netted.')
+    render_store()
 
 elif S.route=='Evidence':
     heading('EVIDENCE','Know what the numbers mean.','Check held-out forecasts, with cost and service shown together.')

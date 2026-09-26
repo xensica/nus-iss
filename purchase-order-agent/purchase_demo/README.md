@@ -8,31 +8,34 @@ are synthetic; supplier terms and manager roles remain simulated.
 
 ## Start locally
 
-From `purchase-order-agent` on Windows:
-
-```powershell
-.\.venv\Scripts\python.exe -m pip install -r purchase_demo/requirements.txt
-.\purchase_demo\Start-StockPilot.ps1
-```
-
-Open http://127.0.0.1:8504. The calculation workflow needs no API key.
-
-For Ubuntu, from the same directory:
+From the repository root (the folder containing `package.json`):
 
 ```bash
-python3 -m venv .venv
-.venv/bin/python -m pip install -r purchase_demo/requirements.txt
-.venv/bin/python -m streamlit run purchase_demo/demo_app.py \
-  --server.address 127.0.0.1 --server.port 8504 --server.headless true \
-  --browser.gatherUsageStats false --theme.base light \
-  --theme.primaryColor '#28785f' --theme.backgroundColor '#f6f8f6' \
-  --theme.secondaryBackgroundColor '#eef3ef' --theme.textColor '#21372f'
+npm start
 ```
 
-The loopback preview needs an SSH tunnel on a remote machine. The user's existing
-Lightsail demo uses `0.0.0.0:8504` and a public TCP rule. Public operational use needs
-HTTPS, authentication and record isolation. This change does not deploy or restart
-that instance. Do not treat a local test as proof of a deployed revision.
+Requires Node.js 20+ and Python 3.10+. First launch installs Python dependencies in
+an isolated virtual environment; later launches reuse it. Open http://localhost:8504.
+No API key is needed. `npm run setup` installs/repairs dependencies, `npm test` runs
+regressions, and `npm run start:server` binds to all interfaces for a Lightsail demo.
+See the repository README for server and port instructions. The Python entry point
+remains `purchase_demo/demo_app.py`; earlier prototype entry points are archived and are not part of the active app.
+
+The single active source is `purchase-order-agent/purchase_demo`. Older duplicate folders
+are recovery backups in `.archive/` and are never launched.
+
+Store setup is in `ui_store.py`, map selection in `ui_location.py`, shared session
+updates in `ui_state.py`, and product/event dialogs in `ui_details.py`.
+
+### Choose a location
+
+In Store, search an address and choose **Show this place on the map**, or click the
+map directly. A green marker and radius circle preview the proposed point. Name the
+location, then press **Use this store location** to commit it. Clicking alone does not
+change the saved location or event scenario. Confirmation clears the old event scenario.
+The map uses [streamlit-folium](https://github.com/randyzwitch/streamlit-folium) with
+OpenStreetMap tiles; no Google API key is required. Map tiles and search need internet.
+Use the coordinates fallback if tiles cannot load. The map area is limited to Singapore.
 
 ## A simpler workflow
 
@@ -133,6 +136,8 @@ Roles are not authenticated, and a shared database is not tenant-isolated.
 Tests cover the welcome-to-draft-to-approval journey, in-place product review,
 event preview versus confirmed application, source/date/radius filtering, graceful
 network failure, calculation boundaries, budget gates, imports and persistence.
+Settings-save regressions exercise changed values and repeat navigation. Map tests check
+preview-before-confirmation and radius construction; actual browser interaction is separate.
 The old percentage rounding, urgent comparison and misleading zero-quantity error
 findings are corrected with regression tests. Browser visual review is separate
 from Streamlit AppTest; no browser surface was available during this redesign.

@@ -14,3 +14,7 @@ pytest-cache-files-*/
 *.pem
 *.key
 stockpilot.tar.gz
+
+node_modules/
+*.log
+.archive/

@@ -29,6 +29,19 @@ def product_detail(pid):
     if f is None:st.warning(plan['reason']);return
     a,b,c=st.columns(3);a.metric('Buy',f"{f['quantity']} units");b.metric('Total cost',money(plan.get('cost_cents',0)));c.metric('Without an order',f"Gap on day {f['shortage_day']}" if f['shortage_day'] else 'Covered')
     st.write(explanation(r))
+    with st.expander('Stock and demand at a glance'):
+        a,b,c=st.columns(3)
+        a.metric('On hand',f"{r['config']['stock']} units")
+        b.metric('Already incoming',f"{r['config']['incoming']} units")
+        c.metric('14-day demand',f"{sum(d['demand'] for d in f['daily'])} units")
+        st.caption(f"Stock snapshot: {r['config']['date']} · safety stock: {f['safety']} units · {f['observations']} recent sales observations.")
+        if r['config']['incoming']:
+            incoming=date.fromisoformat(r['config']['date'])+timedelta(days=r['config']['incoming_day'])
+            st.write(f"Existing incoming stock is expected on {incoming:%d %b %Y}.")
+        for order in plan.get('orders',[]):
+            arrives=date.fromisoformat(r['config']['date'])+timedelta(days=order['delivery_days'])
+            st.write(f"{order['supplier']}: {order['quantity']} units estimated on {arrives:%d %b %Y}, including a {money(order['delivery_fee_cents'])} delivery fee.")
+        st.caption('Projected quantities use your sales history and chosen assumptions; delivery dates use simulated supplier terms.')
     if plan['status']=='blocked':st.warning(plan['reason'])
     elif plan['orders']:st.markdown(shipment_cards(plan['orders']),unsafe_allow_html=True)
     if f['needs_review']:st.info('Limited recent history. Review the forecast before ordering.')

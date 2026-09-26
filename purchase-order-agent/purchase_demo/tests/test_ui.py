@@ -63,3 +63,41 @@ def test_event_preview_needs_confirmation(monkeypatch):
     assert 'BAR' not in app.session_state['overrides']
     next(b for b in app.button if b.label=='Remove event scenario').click().run()
     assert not app.exception and not app.session_state['overrides']
+
+
+def test_save_planning_settings_and_return_to_store():
+    app=AppTest.from_file(str(Path(__file__).parents[1]/'demo_app.py'),default_timeout=30).run()
+    app.button(key='nav_Store').click().run()
+    next(w for w in app.number_input if w.label=='Purchasing budget (SGD)').set_value(7000)
+    next(w for w in app.slider if w.label=='Safety buffer (days)').set_value(2)
+    next(b for b in app.button if b.label.startswith('Save & see')).click().run()
+    assert not app.exception, [e.message for e in app.exception]
+    assert app.session_state['route']=='Today'
+    assert app.session_state['settings']['budget']==7000
+    assert app.session_state['analysis']['budget_cents']==700000
+    assert app.session_state['settings']['buffer_days']==2
+    app.button(key='nav_Store').click().run()
+    assert not app.exception
+    assert next(w for w in app.number_input if w.label=='Purchasing budget (SGD)').value==7000
+    next(b for b in app.button if b.label.startswith('Save & see')).click().run()
+    assert not app.exception
+
+
+def test_map_click_is_proposal_until_confirmed(monkeypatch):
+    from purchase_demo import ui_location
+    point = {'value': None}
+    monkeypatch.setattr(ui_location, 'st_folium', lambda *a, **kw: {'last_clicked': point['value']})
+    app=AppTest.from_file(str(Path(__file__).parents[1]/'demo_app.py'),default_timeout=30).run()
+    app.button(key='nav_Store').click().run()
+    point['value']={'lat':1.29,'lng':103.855}
+    app.run()
+    assert not app.exception
+    assert app.session_state['location'] is None
+    assert app.session_state['map_candidate']['lat']==1.29
+    app.session_state['event_report']={'events':['old location']}
+    next(b for b in app.button if b.label=='Use this store location').click().run()
+    assert not app.exception
+    assert app.session_state['location']['lat']==1.29
+    assert 'event_report' not in app.session_state
+    app.run()
+    assert not app.exception

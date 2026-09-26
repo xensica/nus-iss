@@ -1,0 +1,13 @@
+{
+  "name": "stockpilot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "StockPilot purchasing workspace",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node scripts/stockpilot.mjs",
+    "start:server": "node scripts/stockpilot.mjs --public",
+    "setup": "node scripts/stockpilot.mjs --setup",
+    "test": "node scripts/stockpilot.mjs --test"
+  }
+}
